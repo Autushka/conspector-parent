@@ -1,0 +1,34 @@
+<div class="cimlogin row">
+    <div class="status bg-danger ng-binding auth-error" ng-show="!!authenticationError">
+        {{authenticationError}}<span class="close auth-error-close" ng-click="authenticationError = null">&#10006;</span>
+    </div>
+    
+    <div class="col-md-4 col-md-offset-4">
+        <form class="form" role="form">
+            <div class="form-group" ng-class="{required: !!formValidation.username}">
+                <label for="username">Username</label>
+                <input type="text" class="form-control" id="username" placeholder="Your username" ng-model="username" ng-change="formValidation.username = null" autofocus>
+
+                <div ng-messages="formValidation">
+                    <span class="errormsg" ng-message="username">
+                        {{formValidation.username}}
+                    </span>
+                </div>
+            </div>
+
+            <div class="form-group" ng-class="{required: !!formValidation.password}">
+                <label for="password">Password</label>
+                <input type="password" class="form-control" id="password" placeholder="Your password"
+                       ng-model="password" ng-change="formValidation.password = null">
+
+                <div ng-messages="formValidation">
+                    <span class="errormsg" ng-message="password">
+                        {{formValidation.password}}
+                    </span>
+                </div>
+            </div>
+
+            <button type="submit" id="loginBtn" class="btn btn-primary" ng-click="login()">SUBMIT</button>
+        </form>
+    </div>
+</div>
