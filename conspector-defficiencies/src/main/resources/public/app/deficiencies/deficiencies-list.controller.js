@@ -6,7 +6,7 @@ function DeficienciesListCtrl($scope, $timeout, $stateParams, $http, $window, $c
     $scope.authValues = APP_SETTINGS.authValues;
 
     $scope.onLogOut = function() {
-        $http.post('logout', {}).success(function() {}).error(function(data) {});
+        $http.post('http://localhost:9000/logout', {}).success(function() {}).error(function(data) {});
 
     };
 }

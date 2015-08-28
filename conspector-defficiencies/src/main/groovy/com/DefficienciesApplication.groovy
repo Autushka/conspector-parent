@@ -47,12 +47,13 @@ class DefficienciesApplication {
 					.logout()
 					.and()
 					.authorizeRequests()
-					.antMatchers("/#/deficiencies-list", "/logout", "/login?logout", "/user", "/", "/index.html", "/build/**", "/views/**", "/img/**", "/fonts/**").permitAll()
+					.antMatchers("/#/deficiencies-list", "/user", "/logout", "/login?logout", "/", "/index.html", "/build/**", "/views/**", "/img/**", "/fonts/**").permitAll()
 					.anyRequest().authenticated()
 					.and()
-					.csrf().csrfTokenRepository(csrfTokenRepository())
-					.and()
-					.addFilterAfter(csrfHeaderFilter(), CsrfFilter.class);
+//					.csrf().csrfTokenRepository(csrfTokenRepository())
+//					.and()
+//					.addFilterAfter(csrfHeaderFilter(), CsrfFilter.class)
+					.csrf().disable();
 			// @formatter:on
 		}
 

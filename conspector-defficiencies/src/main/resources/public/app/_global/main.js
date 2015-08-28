@@ -15,10 +15,10 @@ function onDocumentReady() {
     http = injector.get('$http');
     authValues = {};
     debugger;
-    http.get('http://localhost:8080/user', {
+    http.get('http://localhost:9000/user', {
         headers: {
             'X-Requested-With': 'XMLHttpRequest'
-        }
+},        withCredentials: true
     }).success(function(response) {
         if (response) {
             authValues = response;

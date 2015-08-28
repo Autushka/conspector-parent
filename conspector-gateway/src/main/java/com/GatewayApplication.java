@@ -63,12 +63,13 @@ public class GatewayApplication {
 				.logout()
 			.and()
 				.authorizeRequests()
-					.antMatchers("/#/login", "/user", "/login?logout", "/", "/index.html", "/build/**", "/views/**", "/img/**", "/fonts/**").permitAll()
+					.antMatchers("/#/login", "/logout", "/user", "/login?logout", "/", "/index.html", "/build/**", "/views/**", "/img/**", "/fonts/**").permitAll()
 					.anyRequest().authenticated()
 			.and()
-				.csrf().csrfTokenRepository(csrfTokenRepository())
-			.and()
-				.addFilterAfter(csrfHeaderFilter(), CsrfFilter.class);
+//				.csrf().csrfTokenRepository(csrfTokenRepository())
+//			.and()
+//				.addFilterAfter(csrfHeaderFilter(), CsrfFilter.class)
+			.csrf().disable();
 			// @formatter:on
 		}
 
