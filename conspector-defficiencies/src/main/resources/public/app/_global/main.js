@@ -14,11 +14,12 @@ function onDocumentReady() {
     var injector = angular.injector(['app']);
     http = injector.get('$http');
     authValues = {};
-    debugger;
+
     http.get('http://localhost:9000/user', {
         headers: {
             'X-Requested-With': 'XMLHttpRequest'
-},        withCredentials: true
+        },
+        withCredentials: true
     }).success(function(response) {
         if (response) {
             authValues = response;

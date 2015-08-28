@@ -1,7 +1,10 @@
 'use strict';
 
 module.exports = {
-    browserport: 6001,
+
+    browserport: 3001, // uiport: 3001,
+    // //'serverport'   : 3002,
+    serverport: 9000,
 
     root: 'src/main/resources/public',
     dist: 'src/main/resources/public/build',
