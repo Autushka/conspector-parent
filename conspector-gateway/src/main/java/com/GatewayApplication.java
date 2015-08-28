@@ -16,10 +16,12 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.cloud.netflix.zuul.EnableZuulProxy;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 
+import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.security.config.annotation.
 		authentication.builders.AuthenticationManagerBuilder;
 
@@ -66,9 +68,6 @@ public class GatewayApplication {
 					.antMatchers("/#/login", "/logout", "/user", "/login?logout", "/", "/index.html", "/build/**", "/views/**", "/img/**", "/fonts/**").permitAll()
 					.anyRequest().authenticated()
 			.and()
-//				.csrf().csrfTokenRepository(csrfTokenRepository())
-//			.and()
-//				.addFilterAfter(csrfHeaderFilter(), CsrfFilter.class)
 			.csrf().disable();
 			// @formatter:on
 		}
@@ -83,6 +82,16 @@ public class GatewayApplication {
 					.withUser("admin").password("password").roles("ADMIN");
 		}
 
+//		@Bean
+//		public DataSource dataSource() {
+//			DriverManagerDataSource ds = new DriverManagerDataSource();
+//			ds.setDriverClassName("com.mysql.jdbc.Driver");
+//			ds.setUrl("jdbc:mysql://localhost/gateway");
+//			ds.setUsername("root");
+//			ds.setPassword("");
+//			return ds;
+//		}
+//
 //		@Autowired
 //		DataSource dataSource;
 //		@Override
@@ -93,34 +102,19 @@ public class GatewayApplication {
 //					.dataSource(dataSource);
 //		}
 
-		private Filter csrfHeaderFilter() {
-			return new OncePerRequestFilter() {
-				@Override
-				protected void doFilterInternal(HttpServletRequest request,
-						HttpServletResponse response, FilterChain filterChain)
-						throws ServletException, IOException {
-					CsrfToken csrf = (CsrfToken) request.getAttribute(CsrfToken.class
-							.getName());
-					if (csrf != null) {
-						Cookie cookie = WebUtils.getCookie(request, "XSRF-TOKEN");
-						String token = csrf.getToken();
-						if (cookie == null || token != null
-								&& !token.equals(cookie.getValue())) {
-							cookie = new Cookie("XSRF-TOKEN", token);
-							cookie.setPath("/");
-							response.addCookie(cookie);
-						}
-					}
-					filterChain.doFilter(request, response);
-				}
-			};
-		}
-
-		private CsrfTokenRepository csrfTokenRepository() {
-			HttpSessionCsrfTokenRepository repository = new HttpSessionCsrfTokenRepository();
-			repository.setHeaderName("X-XSRF-TOKEN");
-			return repository;
-		}
 	}
 
 }
+
+//sql scripts to populate db. Note: varchar_ignorecase was causing an issue and was changed to just varchar...
+
+//create table users(
+//		username varchar_ignorecase(50) not null primary key,
+//		password varchar_ignorecase(50) not null,
+//		enabled boolean not null);
+//
+//		create table authorities (
+//		username varchar_ignorecase(50) not null,
+//		authority varchar_ignorecase(50) not null,
+//		constraint fk_authorities_users foreign key(username) references users(username));
+//		create unique index ix_auth_username on authorities (username,authority);
