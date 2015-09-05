@@ -1,38 +1,25 @@
 package com;
 
-import java.io.IOException;
 import java.security.Principal;
-import java.util.List;
 
-import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.PersistenceContext;
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
 
-import com.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
-import org.springframework.cloud.netflix.zuul.EnableZuulProxy;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
-import org.springframework.orm.jpa.JpaTransactionManager;
+import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
-import org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor;
 import org.springframework.orm.jpa.vendor.Database;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.security.config.annotation.
@@ -42,20 +29,10 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.password.StandardPasswordEncoder;
-import org.springframework.security.web.csrf.CsrfFilter;
-import org.springframework.security.web.csrf.CsrfToken;
-import org.springframework.security.web.csrf.CsrfTokenRepository;
-import org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository;
 import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
-import org.springframework.stereotype.Repository;
-import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.filter.OncePerRequestFilter;
-import org.springframework.web.util.WebUtils;
 
 @Configuration // needed to specify that the class contains global spring configurations
 @ComponentScan
@@ -78,6 +55,7 @@ public class GatewayApplication {
 		ds.setUrl("jdbc:mysql://localhost/gateway");
 		ds.setUsername("root");
 		ds.setPassword("");
+
 		return ds;
 	}
 
@@ -113,12 +91,12 @@ public class GatewayApplication {
 		SpringApplication.run(GatewayApplication.class, args);
 	}
 
+
 	@Configuration
 	@Order(SecurityProperties.ACCESS_OVERRIDE_ORDER)
 	protected static class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 		@Override
 		protected void configure(HttpSecurity http) throws Exception {
-			// @formatter:off
 			http
 				.httpBasic()
 			.and()
@@ -129,31 +107,22 @@ public class GatewayApplication {
 					.anyRequest().authenticated()
 			.and()
 				.csrf().disable();
-			// @formatter:on
 		}
 
-
-//		@Override
-//		protected void configure(AuthenticationManagerBuilder auth)
-//				throws Exception {
-//			auth
-//					.inMemoryAuthentication()
-//					.withUser("user").password("password").roles("USER").and()
-//					.withUser("admin").password("password").roles("ADMIN");
-//		}
 
 		@Autowired
-		DataSource dataSource;
+		private DataSource dataSource;
+
 		@Override
-		protected void configure(AuthenticationManagerBuilder auth)
-				throws Exception {
-			auth
-					.jdbcAuthentication()
-					.dataSource(dataSource)
-					.passwordEncoder(new StandardPasswordEncoder("53cr3t"));
+		protected void configure(AuthenticationManagerBuilder auth)	throws Exception {
+			auth.jdbcAuthentication().dataSource(dataSource).passwordEncoder(new StandardPasswordEncoder("53cr3t"));
+
+			ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
+			populator.setContinueOnError(true);
+			populator.addScript(new ClassPathResource("/sql/db_initializer.sql"));
+			populator.populate(dataSource.getConnection());
 		}
 	}
-
 }
 
 //sql scripts to populate db. Note: varchar_ignorecase was causing an issue and was changed to just varchar...
