@@ -37,14 +37,20 @@ function LoginCtrl($scope, $timeout, $stateParams, $http, $window, $cookies, APP
             authorization: "Basic " + btoa(postData.userName + ":" + postData.password)
         } : {};
 
-        $http.get('http://localhost:8080/user', {
-            headers: headers //,
-            // withCredentials: true
-        }).success(function(data) {
+        $http.post('http://localhost:8080/login?remember_me=true', postData).success(function(data) {
             onLoginSuccess();
         }).error(function() {
             onLoginFailure();
         });
+
+        // $http.get('http://localhost:8080/user', {
+        //     headers: headers //,
+        //     // withCredentials: true
+        // }).success(function(data) {
+        //     onLoginSuccess();
+        // }).error(function() {
+        //     onLoginFailure();
+        // });
     };
 
     function removeErrors() {

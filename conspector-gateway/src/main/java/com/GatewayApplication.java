@@ -41,6 +41,7 @@ import org.springframework.security.config.annotation.
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.crypto.password.StandardPasswordEncoder;
 import org.springframework.security.web.csrf.CsrfFilter;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.security.web.csrf.CsrfTokenRepository;
@@ -127,7 +128,7 @@ public class GatewayApplication {
 					.antMatchers("/#/login", "/logout", "/user", "/login?logout", "/", "/index.html", "/build/**", "/views/**", "/img/**", "/fonts/**").permitAll()
 					.anyRequest().authenticated()
 			.and()
-			.csrf().disable();
+				.csrf().disable();
 			// @formatter:on
 		}
 
@@ -148,7 +149,8 @@ public class GatewayApplication {
 				throws Exception {
 			auth
 					.jdbcAuthentication()
-					.dataSource(dataSource);
+					.dataSource(dataSource)
+					.passwordEncoder(new StandardPasswordEncoder("53cr3t"));
 		}
 	}
 
@@ -157,12 +159,27 @@ public class GatewayApplication {
 //sql scripts to populate db. Note: varchar_ignorecase was causing an issue and was changed to just varchar...
 //
 //create table users(
-//		username varchar_ignorecase(50) not null primary key,
-//		password varchar_ignorecase(50) not null,
+//		username varchar(100) not null primary key,
+//		password varchar(100) not null,
 //		enabled boolean not null);
 //
 //		create table authorities (
-//		username varchar_ignorecase(50) not null,
-//		authority varchar_ignorecase(50) not null,
+//		username varchar(100) not null,
+//		authority varchar(100) not null,
 //		constraint fk_authorities_users foreign key(username) references users(username));
 //		create unique index ix_auth_username on authorities (username,authority);
+
+//create table groups (
+//		id bigint AUTO_INCREMENT primary key,
+//		group_name varchar(100) not null);
+//
+//		create table group_authorities (
+//		group_id bigint not null,
+//		authority varchar(100) not null,
+//		constraint fk_group_authorities_group foreign key(group_id) references groups(id));
+//
+//		create table group_members (
+//		id bigint AUTO_INCREMENT primary key,
+//		username varchar(100) not null,
+//		group_id bigint not null,
+//		constraint fk_group_members_group foreign key(group_id) references groups(id));
