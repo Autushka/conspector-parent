@@ -23,12 +23,15 @@
 
                 <div ng-messages="formValidation">
                     <span class="errormsg" ng-message="password">
-                        {{formValidation.password}}
-                    </span>
+                        {{formValidation.password}} 
+                    </span> 
                 </div>
             </div>
 
-            <button type="submit" id="loginBtn" class="btn btn-primary" ng-click="login()">SUBMIT</button>
+            <input id="remember_me" name="remember-me" type="checkbox" ng-model="remember_me"/>
+            <label for="remember_me">Remember me</label>
+
+            <button type="submit" id="loginBtn" class="btn btn-primary" ng-click="login()" style="    display: block; width: 100%; margin-top: 1rem;">SUBMIT</button>
         </form>
     </div>
 </div>

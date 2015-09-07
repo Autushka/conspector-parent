@@ -28,29 +28,30 @@ function LoginCtrl($scope, $timeout, $stateParams, $http, $window, $cookies, APP
             return;
         }
 
-        var postData = {
-            userName: $scope.username,
-            password: $scope.password
-        };
+        //************************************************************************************
+        //Example of basic authentication (authentication without login page but with request headers)
+        //Note: Remember me feature is not supported for basic authentication and default spring security settings
+        //************************************************************************************
+        // var headers = postData ? {
+        //     authorization: "Basic " + btoa($scope.username + ":" + $scope.password)
+        // } : {};
+        // var req = {
+        //     url: "http://localhost:8080/user",
+        //     headers: headers,
+        //     method: "POST",
+        //     data: {}
+        // };
+        //************************************************************************************
 
-        var headers = postData ? {
-            authorization: "Basic " + btoa(postData.userName + ":" + postData.password)
-        } : {};
-
-        $http.post('http://localhost:8080/login?remember_me=true', postData).success(function(data) {
+        $http.post('login', "username=" + $scope.username + "&password=" + $scope.password + "&remember-me=" + $scope.remember_me, {
+            headers: {
+                "content-type": "application/x-www-form-urlencoded"
+            }
+        }).success(function(data) {
             onLoginSuccess();
         }).error(function() {
             onLoginFailure();
         });
-
-        // $http.get('http://localhost:8080/user', {
-        //     headers: headers //,
-        //     // withCredentials: true
-        // }).success(function(data) {
-        //     onLoginSuccess();
-        // }).error(function() {
-        //     onLoginFailure();
-        // });
     };
 
     function removeErrors() {

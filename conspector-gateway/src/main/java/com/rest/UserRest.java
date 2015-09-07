@@ -42,7 +42,6 @@ public class UserRest {
         return userDro;
     }
 
-    @Secured("ROLE_ADMIN")
     @RequestMapping(value = "/createUser", method = RequestMethod.POST)
     public UserResponseDto createUser(@RequestBody UserRequestDto userRequestDto) {
         User user = modelMapper.map(userRequestDto, User.class);
@@ -51,7 +50,7 @@ public class UserRest {
         String encodedPassword = standardPasswordEncoder.encode(user.getPassword());
         user.setPassword(encodedPassword);
 
-        user.setEnabled(true);//TODO: initially should be false
+        user.setEnabled(true);//TODO: initially should be false (email validation step is missing for now)
 
         UserRepository.save(user);
 

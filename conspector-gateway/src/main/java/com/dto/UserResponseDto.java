@@ -5,13 +5,29 @@ package com.dto;
  */
 public class UserResponseDto {
     private String username;
+    private String firstName;
+    private String lastName;
     private Boolean enabled;
 
     public String getUserName(){
         return this.username;
     }
-    public void setUserName(String username){
-        this.username = username;
+    public void setUserName(String value){
+        this.username = value;
+    }
+
+    public String getFirstName(){
+        return this.firstName;
+    }
+    public void setFirstName(String value){
+        this.firstName = value;
+    }
+
+    public String getLastName(){
+        return this.lastName;
+    }
+    public void setLastName(String value){
+        this.lastName = value;
     }
 
     public Boolean getEnabled(){
