@@ -32,9 +32,9 @@ function LoginCtrl($scope, $timeout, $stateParams, $http, $window, $cookies, APP
         //Example of basic authentication (authentication without login page but with request headers)
         //Note: Remember me feature is not supported for basic authentication and default spring security settings
         //************************************************************************************
-        // var headers = postData ? {
+        // var headers = {
         //     authorization: "Basic " + btoa($scope.username + ":" + $scope.password)
-        // } : {};
+        // };
         // var req = {
         //     url: "http://localhost:8080/user",
         //     headers: headers,

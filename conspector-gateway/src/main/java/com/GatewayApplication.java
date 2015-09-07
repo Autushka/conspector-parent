@@ -1,6 +1,7 @@
 package com;
 
 import java.security.Principal;
+import java.util.Properties;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
@@ -75,13 +76,14 @@ public class GatewayApplication {
 		HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
 		vendorAdapter.setDatabase(Database.MYSQL);
 		vendorAdapter.setShowSql(true);
-		vendorAdapter.setGenerateDdl(false);
+		vendorAdapter.setGenerateDdl(false); //true value not for production !!! update db after entityManager instantiation based on entities
 		vendorAdapter.setDatabasePlatform("org.hibernate.dialect.MySQL5Dialect");
 
 		LocalContainerEntityManagerFactoryBean factory = new LocalContainerEntityManagerFactoryBean();
 		factory.setJpaVendorAdapter(vendorAdapter);
 		factory.setPackagesToScan("com.entity");
 		factory.setDataSource(dataSource());
+
 		factory.afterPropertiesSet();
 
 		return factory.getObject();
@@ -99,12 +101,12 @@ public class GatewayApplication {
 		protected void configure(HttpSecurity http) throws Exception {
 			//2419200 means 4 weeks
 			http
-				.formLogin()
+					.formLogin()
 				.and()
 					.rememberMe()
-						.tokenValiditySeconds(2419200)
+					.tokenValiditySeconds(2419200)
 					.key("conspector")
-				.and()
+					.and()
 					.logout()
 				.and()
 					.authorizeRequests()

@@ -12,16 +12,16 @@ import javax.persistence.Table;
 @Table(name = "users")
 public class User {
     @Id
-    @Column(name = "username", length = 100)
+    @Column(name = "username")
     private String username;
 
-    @Column(name = "firstName", length = 100)
+    @Column(name = "first_name")
     private String firstName;
 
-    @Column(name = "lastName", length = 100)
+    @Column(name = "last_name")
     private String lastName;
 
-    @Column(name = "password", length = 100)
+    @Column(name = "password")
     private String password;
 
     @Column(name = "enabled")
