@@ -34,13 +34,13 @@ create unique index ix_auth_username on authorities (username,authority);
 --		constraint fk_group_members_group foreign key(group_id) references groups(id));
 
 insert into users
-        values ('admin', "Tom", "Sawyer", '020aa40d02ed72bc980c05caa7506f7c791ecbd91d1210cc4ab4e830881989f06a9fdaff9a5b5bef', true);
+        values ('admin@gmail.com', "Tom", "Sawyer", '020aa40d02ed72bc980c05caa7506f7c791ecbd91d1210cc4ab4e830881989f06a9fdaff9a5b5bef', true);
 
 insert into users
-        values ('user', "Peter", "Pan", '020aa40d02ed72bc980c05caa7506f7c791ecbd91d1210cc4ab4e830881989f06a9fdaff9a5b5bef', true);
+        values ('user@gmail.com', "Peter", "Pan", '020aa40d02ed72bc980c05caa7506f7c791ecbd91d1210cc4ab4e830881989f06a9fdaff9a5b5bef', true);
 
 insert into authorities
-        values ('admin', 'ROLE_ADMIN');
+        values ('admin@gmail.com', 'ROLE_ADMIN');
 
 insert into authorities
-        values ('user', 'ROLE_USER');
+        values ('user@gmail.com', 'ROLE_USER');

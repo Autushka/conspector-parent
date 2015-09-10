@@ -6,14 +6,14 @@ import com.dto.UserResponseDto;
 import com.repository.IUserRepository;
 import com.entity.User;
 
-
-import com.repository.exception.NotAuthorizedActionException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.crypto.password.StandardPasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -22,6 +22,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+
+import javax.validation.Valid;
+import javax.validation.Validator;
 import java.security.Principal;
 import java.util.*;
 
@@ -33,7 +36,10 @@ import java.util.*;
 @RequestMapping("/gateway")
 public class UserRest {
     @Autowired
-	private IUserRepository UserRepository;
+	private IUserRepository userRepository;
+
+    @Autowired
+    private Validator validator;
 
     private ModelMapper modelMapper = new ModelMapper(); //read more at http://modelmapper.org/user-manual/
 
@@ -43,20 +49,26 @@ public class UserRest {
     }
 
     @RequestMapping(value = "/createUser", method = RequestMethod.POST)
-    public UserResponseDto createUser(@RequestBody UserRequestDto userRequestDto) {
-        User user = modelMapper.map(userRequestDto, User.class);
+
+    public ResponseEntity<UserResponseDto> createUser(@Valid @RequestBody UserRequestDto userRequestDto) {
+        User user;
+        user = userRepository.findByUsername(userRequestDto.getUsername());
+        if(user != null){
+            throw new RuntimeException("User with provided email is already registered in the system.");
+        }
 
         StandardPasswordEncoder standardPasswordEncoder = new StandardPasswordEncoder("53cr3t");
-        String encodedPassword = standardPasswordEncoder.encode(user.getPassword());
-        user.setPassword(encodedPassword);
+        String encodedPassword = standardPasswordEncoder.encode(userRequestDto.getPassword());
+        userRequestDto.setPassword(encodedPassword);
 
+        user = modelMapper.map(userRequestDto, User.class);
         user.setEnabled(true);//TODO: initially should be false (email validation step is missing for now)
 
-        UserRepository.save(user);
+        userRepository.save(user);
 
         UserResponseDto userResponseDto = modelMapper.map(user, UserResponseDto.class);
 
-        return userResponseDto;
+        return new ResponseEntity<UserResponseDto>(userResponseDto, HttpStatus.OK);
     }
 
     @Secured("ROLE_ADMIN")
@@ -64,33 +76,38 @@ public class UserRest {
     // example of multicolumn sorting with pagination:
     // http://localhost:8080/gateway/getUsers?pag=0&size=1&sort=username,desc&sort=enabled,asc
     public Page<UserResponseDto> getUsers(Pageable pageable) {
+        int totalElements = 0;
         List<UserResponseDto> usersResponseDto = new ArrayList<UserResponseDto>();
-        Page<User> users = UserRepository.findAll(pageable);
+        Page<User> users = userRepository.findAll(pageable);
 
-        for(User user : users){
-            UserResponseDto userResponseDto = this.convertToDto(user);
-            usersResponseDto.add(userResponseDto);
+        if(users != null){
+            totalElements = users.getNumberOfElements();
+            for(User user : users){
+                UserResponseDto userResponseDto = this.convertToDto(user);
+                usersResponseDto.add(userResponseDto);
+            }
         }
 
-        return new PageImpl<>(usersResponseDto, pageable, users.getTotalElements());
+        return new PageImpl<>(usersResponseDto, pageable, totalElements);
     }
 
-
     @RequestMapping(value = "/changePassword", method = RequestMethod.PUT)
-    public void changePassword(@RequestBody UserPasswordRequestDto userPasswordRequestDto, Principal user) {
+    public ResponseEntity changePassword(@Valid @RequestBody UserPasswordRequestDto userPasswordRequestDto, Principal user) {
         String username =  user.getName();
 
-        User userFromDB = UserRepository.findByUsername(username);
+        User userFromDB = userRepository.findByUsername(username);
 
         StandardPasswordEncoder standardPasswordEncoder = new StandardPasswordEncoder("53cr3t");
 
         if(!standardPasswordEncoder.matches(userPasswordRequestDto.getCurrentPassword(), userFromDB.getPassword())){
-            throw new NotAuthorizedActionException("Not authorized action detected...");
+            throw new RuntimeException("Provided currentPassword is not correct.");
         }
 
         String encodedNewPassword = standardPasswordEncoder.encode(userPasswordRequestDto.getNewPassword());
         userFromDB.setPassword(encodedNewPassword);
 
-        UserRepository.save(userFromDB);
+        userRepository.save(userFromDB);
+
+        return new ResponseEntity(HttpStatus.OK);
     }
 }

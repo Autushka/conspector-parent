@@ -9,10 +9,10 @@ public class UserResponseDto {
     private String lastName;
     private Boolean enabled;
 
-    public String getUserName(){
+    public String getUsername(){
         return this.username;
     }
-    public void setUserName(String value){
+    public void setUsername(String value){
         this.username = value;
     }
 

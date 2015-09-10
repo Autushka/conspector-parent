@@ -32,6 +32,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.crypto.password.StandardPasswordEncoder;
 import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -87,6 +88,11 @@ public class GatewayApplication {
 		factory.afterPropertiesSet();
 
 		return factory.getObject();
+	}
+
+	@Bean
+	public javax.validation.Validator localValidatorFactoryBean() {
+		return new LocalValidatorFactoryBean();
 	}
 
 	public static void main(String[] args) {
