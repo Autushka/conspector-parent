@@ -6,7 +6,7 @@ In order to check this example please follow the steps:
 
 - Make sure that you have MySQL db running locally on default port (user: root, password: '');
 - Create db with name gateway. This database will be initialized by the application on the run time. Two users will be added:
-'admin' and 'user' both with password 'admin'. admin will be assigned to roles ROLE_ADMIN and ROLE_USER, user will be assigned to the role ROLE_USER (check db_initializer.sql in resources for more details). Passwords will 
+'admin@gmail.com' and 'user@gmail.com' both with password 'admin'. admin@gmail.com will be assigned to roles ROLE_ADMIN and ROLE_USER, user@gmail.com will be assigned to the role ROLE_USER (check db_initializer.sql in resources for more details). Passwords will 
 be stored in DB in encoded mode.
 
 - In command line navigate to conspector-gateway folder and execute 
@@ -35,10 +35,23 @@ Note: UI part during development can be run on separate web server. There are so
 - Deficiencies microservice UI should use port 8084 (can be changed if needed)
 - Logout functionality won't properly work for Deficiencies microservice.
 
-There is a sample secured rest end point in gateway project that will return a list of existing users if user is logged in
-and is assigned to the role ROLE_ADMIN. Here is the path to the end point: http://localhost:8080/gateway/getUsers (type of the request is GET). Response can be pagenated and sorted (i.e. http://localhost:8080/gateway/getUsers?pag=0&size=1&sort=username,desc&sort=enabled,asc)
+Features:
 
-Logged in user can change his password with PUT request http://localhost:8080/gateway/changePassword that 
+- Example of paginatable/sortable end point (sample secured rest end point in gateway project that will return a list of existing users if user is logged in
+and is assigned to the role ROLE_ADMIN). Here is the path to the end point: http://localhost:8080/gateway/getUsers (type of the request is GET). Response can be pagenated and sorted (i.e. http://localhost:8080/gateway/getUsers?pag=0&size=1&sort=username,desc&sort=enabled,asc)
+
+- Logged in user can change his password with PUT request http://localhost:8080/gateway/changePassword that 
 accept two attributes in the payload: currentPassword and newPassword.
+
+- Possibility to remember password (will be kept for two months);
+
+- Request input data validation (validation result will be returned with details per attribute - can be used to
+display field validation in UI for each view of the form)
+
+- Backend Localization enabled (based on cookie conspectorLanguage - cookie will stay valid for one month). I.e. request input validation results will be returned with respect of the current language. As example - there is validation for proper email format and password length for create user end point.
+
+- Rest end point unit test examples (groovy based)
+
+
 
 	
