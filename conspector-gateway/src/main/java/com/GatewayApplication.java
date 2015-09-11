@@ -10,9 +10,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.core.annotation.Order;
 
 import org.springframework.core.io.ClassPathResource;
@@ -32,9 +34,12 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.crypto.password.StandardPasswordEncoder;
 import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.LocaleResolver;
+import org.springframework.web.servlet.i18n.CookieLocaleResolver;
 
 @Configuration // needed to specify that the class contains global spring configurations
 @ComponentScan
@@ -93,6 +98,29 @@ public class GatewayApplication {
 	@Bean
 	public javax.validation.Validator localValidatorFactoryBean() {
 		return new LocalValidatorFactoryBean();
+	}
+
+	@Bean
+	public LocaleResolver localeResolver() {
+		CookieLocaleResolver cookieLocaleResolver = new CookieLocaleResolver();
+		cookieLocaleResolver.setDefaultLocale(StringUtils.parseLocaleString("en"));
+		cookieLocaleResolver.setCookieName("conspectorLanguage");
+		cookieLocaleResolver.setCookieMaxAge(604800);//one month
+		return cookieLocaleResolver;
+	}
+
+	@Bean
+	public MessageSource messageSource() {
+
+		ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
+		messageSource.setBasenames("classpath:messages");
+		// if true, the key of the message will be displayed if the key is not
+		// found, instead of throwing a NoSuchMessageException
+		messageSource.setUseCodeAsDefaultMessage(true);
+		messageSource.setDefaultEncoding("UTF-8");
+		// # -1 : never reload, 0 always reload
+		messageSource.setCacheSeconds(0);
+		return messageSource;
 	}
 
 	public static void main(String[] args) {

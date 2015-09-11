@@ -31,6 +31,9 @@
             <input id="remember_me" name="remember-me" type="checkbox" ng-model="remember_me"/>
             <label for="remember_me">Remember me</label>
 
+            <select class="form-control" style="background-color: white; border: 1px solid silver;"  ng-change="onLanguageChange()" ng-model="language" ng-options="language.description for language in languages"> 
+            </select>
+
             <button type="submit" id="loginBtn" class="btn btn-primary" ng-click="login()" style="    display: block; width: 100%; margin-top: 1rem;">SUBMIT</button>
         </form>
     </div>

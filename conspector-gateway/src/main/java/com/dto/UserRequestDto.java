@@ -1,8 +1,6 @@
 package com.dto;
 
-import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotEmpty;
-
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
@@ -12,30 +10,23 @@ import javax.validation.constraints.Size;
  */
 public class UserRequestDto {
 
-    @NotNull(message = "Field is mandatory")
-    @NotEmpty(message = "Field can not be empty")
-    @Pattern(regexp=".+@.+\\.[a-z]+", message = "Not a valid email value...")
+    @NotNull(message = "{FieldIsMandatory}")
+    @NotEmpty(message = "{FieldCanNotBeEmpty}")
+    @Pattern(regexp=".+@.+\\.[a-z]+", message = "{NotValidEmailValue}")
     private String username;
 
-    @NotNull(message = "Field is mandatory")
-    @NotEmpty(message = "Field can not be empty")
+    @NotNull(message ="{FieldIsMandatory}")
+    @NotEmpty(message = "{FieldCanNotBeEmpty}")
     private String firstName;
 
-    @NotNull(message = "Field is mandatory")
-    @NotEmpty(message = "Field can not be empty")
+    @NotNull(message = "{FieldIsMandatory}")
+    @NotEmpty(message = "{FieldCanNotBeEmpty}")
     private String lastName;
 
-    @NotNull(message = "Field is mandatory")
-    @NotEmpty(message = "Field can not be empty")
-    @Size(min = 6, message = "Password length should be at least 6 characters...")
+    @NotNull(message = "{FieldIsMandatory}")
+    @NotEmpty(message = "{FieldCanNotBeEmpty}")
+    @Size(min = 6, message =  "{WrongPasswordLength}")
     private String password;
-
-//    public UserRequestDto(String username, String firstName, String lastName, String password){
-//        this.username = username;
-//        this.firstName = firstName;
-//        this.lastName = lastName;
-//        this.password = password;
-//    }
 
     public String getUsername(){
         return this.username;

@@ -5,6 +5,16 @@ module = require('./_index');
 function LoginCtrl($scope, $timeout, $stateParams, $http, $window, $cookies, APP_SETTINGS) {
     removeErrors();
 
+    $scope.languages = [{
+        description: "English",
+        code: "en"
+    }, {
+        description: "French",
+        code: "fr"
+    }];
+
+    $scope.language = $scope.languages[0];
+
     $stateParams.location = $stateParams.location || APP_SETTINGS.apiUrl.defaultRedirect;
 
     function onLoginSuccess(response) {
@@ -62,6 +72,12 @@ function LoginCtrl($scope, $timeout, $stateParams, $http, $window, $cookies, APP
 
         $scope.authenticationError = null;
     }
+
+    $scope.onLanguageChange = function() {
+        $cookies.remove("conspectorLanguage");
+        $cookies.put("conspectorLanguage", $scope.language.code);
+    };
+
 }
 
 module.controller('LoginCtrl', LoginCtrl);
