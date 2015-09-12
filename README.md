@@ -52,6 +52,11 @@ display field validation in UI for each view of the form)
 
 - Rest end point unit test examples (groovy based)
 
+- profiling example (different db source settings based on
+application.properties profile value (development/production));
+
+- spring based audit mechanism (automatic population of the fields CreatedBy, ModifiedBy, CreatedAt, LastModifiedAt);
+
 
 
 	

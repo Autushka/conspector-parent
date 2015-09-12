@@ -1,19 +1,20 @@
 package com.entity;
 
-import org.hibernate.validator.constraints.Email;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+import javax.persistence.*;
+import java.util.Date;
 
 /**
  * Created by aautushk on 8/30/2015.
  */
 @Entity
 @Table(name = "users")
+@EntityListeners(AuditingEntityListener.class)
 public class User {
     @Id
     @Column(name = "username")
@@ -30,6 +31,24 @@ public class User {
 
     @Column(name = "enabled")
     private boolean enabled;
+
+    @Column(name = "created_by_user", nullable = false)
+    @CreatedBy
+    private String createdByUser;
+
+    @Column(name = "created_at", nullable = false)
+    @CreatedDate
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date createdAt;
+
+    @Column(name = "modified_by_user", nullable = false)
+    @LastModifiedBy
+    private String modifiedByUser;
+
+    @Column(name = "modified_at", nullable = false)
+    @LastModifiedDate
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date modifiedAt;
 
     public String getUsername() {
         return username;
@@ -59,10 +78,39 @@ public class User {
         this.password =  value;
     }
 
-    public Boolean getEnabled() {
+    public boolean isEnabled() {
         return enabled;
     }
-    public void setEnabled(Boolean enabled){
+
+    public void setEnabled(boolean enabled) {
         this.enabled = enabled;
+    }
+
+    public String getCreatedByUser() {
+        return createdByUser;
+    }
+    public void setCreatedByUser(String createdByUser) {
+        this.createdByUser = createdByUser;
+    }
+
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public String getModifiedByUser() {
+        return modifiedByUser;
+    }
+    public void setModifiedByUser(String modifiedByUser) {
+        this.modifiedByUser = modifiedByUser;
+    }
+
+    public Date getModifiedAt() {
+        return modifiedAt;
+    }
+    public void setModifiedAt(Date modifiedAt) {
+        this.modifiedAt = modifiedAt;
     }
 }

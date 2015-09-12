@@ -15,6 +15,8 @@ import org.springframework.context.support.ReloadableResourceBundleMessageSource
 import org.springframework.core.annotation.Order;
 
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.data.domain.AuditorAware;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.springframework.orm.jpa.JpaVendorAdapter;
@@ -26,6 +28,9 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.password.StandardPasswordEncoder;
 import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -34,6 +39,7 @@ import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.i18n.CookieLocaleResolver;
+import org.springframework.data.auditing.DateTimeProvider;
 
 @Configuration // needed to specify that the class contains global spring configurations
 @ComponentScan
@@ -43,9 +49,26 @@ import org.springframework.web.servlet.i18n.CookieLocaleResolver;
 @RestController // needed to enable rest end points within the class
 @EnableRedisHttpSession // needed for cross application authentication
 @EnableGlobalMethodSecurity(securedEnabled=true) // needed for method based security (@Secured("ROLE_ADMIN") annotation))
+@EnableJpaAuditing//needed to activate auditing(automatically managed fields createdBy, createdDate, lastModifiedBy, lastModifiedDate)
 public class GatewayApplication {
 	@Autowired
 	private IDataSourceConfig dataSourceConfig;
+
+	private class SpringSecurityAuditorAware implements AuditorAware<String> {
+		@Override
+		public String getCurrentAuditor() {
+			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+			if (authentication == null || !authentication.isAuthenticated()) {
+				return null;
+			}
+			return ((User) authentication.getPrincipal()).getUsername();
+		}
+	}
+
+	@Bean
+	public AuditorAware<String> auditorProvider() {
+		return new SpringSecurityAuditorAware();
+	}
 
 	@Bean
 	public JpaVendorAdapter jpaVendorAdapter() {

@@ -5,7 +5,11 @@ create table users(
 		first_name varchar(100) not null,
 		last_name varchar(100) not null,
 		password varchar(100) not null,
-		enabled boolean not null);
+		enabled boolean not null,
+		created_by_user varchar(100) not null,
+		created_at timestamp not null,
+		modified_by_user varchar(100) not null,
+		modified_at timestamp not null);
 
 create table authorities (
 		username varchar(100) not null,
@@ -34,10 +38,12 @@ create unique index ix_auth_username on authorities (username,authority);
 --		constraint fk_group_members_group foreign key(group_id) references groups(id));
 
 insert into users
-        values ('admin@gmail.com', "Tom", "Sawyer", '020aa40d02ed72bc980c05caa7506f7c791ecbd91d1210cc4ab4e830881989f06a9fdaff9a5b5bef', true);
+        values ('admin@gmail.com', "Tom", "Sawyer", '020aa40d02ed72bc980c05caa7506f7c791ecbd91d1210cc4ab4e830881989f06a9fdaff9a5b5bef',
+        	true, "initialPopulation", '2015-01-01 00:00:01', "initialPopulation", '2015-01-01 00:00:01');
 
 insert into users
-        values ('user@gmail.com', "Peter", "Pan", '020aa40d02ed72bc980c05caa7506f7c791ecbd91d1210cc4ab4e830881989f06a9fdaff9a5b5bef', true);
+        values ('user@gmail.com', "Peter", "Pan", '020aa40d02ed72bc980c05caa7506f7c791ecbd91d1210cc4ab4e830881989f06a9fdaff9a5b5bef',
+         	true, "initialPopulation", '2015-01-01 00:00:01', "initialPopulation", '2015-01-01 00:00:01');
 
 insert into authorities
         values ('admin@gmail.com', 'ROLE_ADMIN');
