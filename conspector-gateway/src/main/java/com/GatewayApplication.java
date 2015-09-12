@@ -1,11 +1,8 @@
 package com;
 
-import java.security.Principal;
-import java.util.Properties;
-
 import javax.persistence.EntityManagerFactory;
-import javax.sql.DataSource;
 
+import com.config.IDataSourceConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -19,14 +16,12 @@ import org.springframework.core.annotation.Order;
 
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.Database;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
-import org.springframework.security.config.annotation.
-		authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -36,7 +31,6 @@ import org.springframework.session.data.redis.config.annotation.web.http.EnableR
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.i18n.CookieLocaleResolver;
@@ -50,21 +44,8 @@ import org.springframework.web.servlet.i18n.CookieLocaleResolver;
 @EnableRedisHttpSession // needed for cross application authentication
 @EnableGlobalMethodSecurity(securedEnabled=true) // needed for method based security (@Secured("ROLE_ADMIN") annotation))
 public class GatewayApplication {
-	@RequestMapping("/user")
-	public Principal user(Principal user) {
-		return user;
-	}
-
-	@Bean
-	public DataSource dataSource() {
-		DriverManagerDataSource ds = new DriverManagerDataSource();
-		ds.setDriverClassName("com.mysql.jdbc.Driver");
-		ds.setUrl("jdbc:mysql://localhost/gateway");
-		ds.setUsername("root");
-		ds.setPassword("");
-
-		return ds;
-	}
+	@Autowired
+	private IDataSourceConfig dataSourceConfig;
 
 	@Bean
 	public JpaVendorAdapter jpaVendorAdapter() {
@@ -88,8 +69,7 @@ public class GatewayApplication {
 		LocalContainerEntityManagerFactoryBean factory = new LocalContainerEntityManagerFactoryBean();
 		factory.setJpaVendorAdapter(vendorAdapter);
 		factory.setPackagesToScan("com.entity");
-		factory.setDataSource(dataSource());
-
+		factory.setDataSource(dataSourceConfig.setup());
 		factory.afterPropertiesSet();
 
 		return factory.getObject();
@@ -127,7 +107,6 @@ public class GatewayApplication {
 		SpringApplication.run(GatewayApplication.class, args);
 	}
 
-
 	@Configuration
 	@Order(SecurityProperties.ACCESS_OVERRIDE_ORDER)
 	protected static class SecurityConfiguration extends WebSecurityConfigurerAdapter {
@@ -151,16 +130,16 @@ public class GatewayApplication {
 		}
 
 		@Autowired
-		private DataSource dataSource;
+		private IDataSourceConfig dataSourceConfig;
 
 		@Override
 		protected void configure(AuthenticationManagerBuilder auth)	throws Exception {
-			auth.jdbcAuthentication().dataSource(dataSource).passwordEncoder(new StandardPasswordEncoder("53cr3t"));
+			auth.jdbcAuthentication().dataSource(dataSourceConfig.setup()).passwordEncoder(new StandardPasswordEncoder("53cr3t"));
 
 			ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
 			populator.setContinueOnError(true);
 			populator.addScript(new ClassPathResource("/sql/db_initializer.sql"));
-			populator.populate(dataSource.getConnection());
+			populator.populate(dataSourceConfig.setup().getConnection());
 		}
 	}
 }
