@@ -32,4 +32,8 @@ public abstract class BaseEntity {
     @LastModifiedDate
     @Temporal(TemporalType.TIMESTAMP)
     private Date modifiedAt;
+
+    @Column(name = "version", nullable = false)
+    @Version
+    private Long version;
 }

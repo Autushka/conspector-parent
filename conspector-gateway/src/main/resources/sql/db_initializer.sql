@@ -9,7 +9,8 @@ create table users(
 		created_by_user varchar(100) not null,
 		created_at timestamp not null,
 		modified_by_user varchar(100) not null,
-		modified_at timestamp not null);
+		modified_at timestamp not null,
+		version bigint);
 
 create table authorities (
 		username varchar(100) not null,
@@ -39,11 +40,11 @@ create unique index ix_auth_username on authorities (username,authority);
 
 insert into users
         values ('admin@gmail.com', "Tom", "Sawyer", '020aa40d02ed72bc980c05caa7506f7c791ecbd91d1210cc4ab4e830881989f06a9fdaff9a5b5bef',
-        	true, "initialPopulation", '2015-01-01 00:00:01', "initialPopulation", '2015-01-01 00:00:01');
+        	true, "initialPopulation", '2015-01-01 00:00:01', "initialPopulation", '2015-01-01 00:00:01', 0);
 
 insert into users
         values ('user@gmail.com', "Peter", "Pan", '020aa40d02ed72bc980c05caa7506f7c791ecbd91d1210cc4ab4e830881989f06a9fdaff9a5b5bef',
-         	true, "initialPopulation", '2015-01-01 00:00:01', "initialPopulation", '2015-01-01 00:00:01');
+         	true, "initialPopulation", '2015-01-01 00:00:01', "initialPopulation", '2015-01-01 00:00:01', 0);
 
 insert into authorities
         values ('admin@gmail.com', 'ROLE_ADMIN');
