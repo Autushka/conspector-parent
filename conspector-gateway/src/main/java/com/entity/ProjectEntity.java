@@ -7,9 +7,9 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name = "projects")
-public class Project {
+public class ProjectEntity {
     @Id
-    @GeneratedValue(strategy= GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "project_guid"   )
     private long projectGuid;
 

@@ -3,8 +3,8 @@ package com.rest;
 import com.dto.UserPasswordRequestDto;
 import com.dto.UserRequestDto;
 import com.dto.UserResponseDto;
+import com.entity.UserEntity;
 import com.repository.IUserRepository;
-import com.entity.User;
 
 import com.utils.BundleMessageReader;
 import org.modelmapper.ModelMapper;
@@ -18,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.crypto.password.StandardPasswordEncoder;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -46,15 +47,15 @@ public class UserRest {
 
     private ModelMapper modelMapper = new ModelMapper(); //read more at http://modelmapper.org/user-manual/
 
-    private UserResponseDto convertToDto(User user) {
+    private UserResponseDto convertToDto(UserEntity user) {
         UserResponseDto userDro = modelMapper.map(user, UserResponseDto.class);
         return userDro;
     }
 
     @RequestMapping(value = "/createUser", method = RequestMethod.POST)
-
+    @Transactional
     public ResponseEntity<UserResponseDto> createUser(@Valid @RequestBody UserRequestDto userRequestDto) {
-        User user;
+        UserEntity user;
         user = userRepository.findByUsername(userRequestDto.getUsername());
         if(user != null){
             throw new RuntimeException(bundleMessageReader.getMessage("UserAlreadyRegistered"));
@@ -64,7 +65,7 @@ public class UserRest {
         String encodedPassword = standardPasswordEncoder.encode(userRequestDto.getPassword());
         userRequestDto.setPassword(encodedPassword);
 
-        user = modelMapper.map(userRequestDto, User.class);
+        user = modelMapper.map(userRequestDto, UserEntity.class);
         user.setEnabled(true);//TODO: initially should be false (email validation step is missing for now)
 
         userRepository.save(user);
@@ -81,11 +82,11 @@ public class UserRest {
     public Page<UserResponseDto> getUsers(Pageable pageable) {
         int totalElements = 0;
         List<UserResponseDto> usersResponseDto = new ArrayList<UserResponseDto>();
-        Page<User> users = userRepository.findAll(pageable);
+        Page<UserEntity> users = userRepository.findAll(pageable);
 
         if(users != null){
             totalElements = users.getNumberOfElements();
-            for(User user : users){
+            for(UserEntity user : users){
                 UserResponseDto userResponseDto = this.convertToDto(user);
                 usersResponseDto.add(userResponseDto);
             }
@@ -95,10 +96,11 @@ public class UserRest {
     }
 
     @RequestMapping(value = "/changePassword", method = RequestMethod.PUT)
+    @Transactional
     public ResponseEntity changePassword(@Valid @RequestBody UserPasswordRequestDto userPasswordRequestDto, Principal user) {
         String username =  user.getName();
 
-        User userFromDB = userRepository.findByUsername(username);
+        UserEntity userFromDB = userRepository.findByUsername(username);
 
         StandardPasswordEncoder standardPasswordEncoder = new StandardPasswordEncoder("53cr3t");
 

@@ -15,7 +15,7 @@ import java.util.Date;
 @Entity
 @Table(name = "users")
 @EntityListeners(AuditingEntityListener.class)
-public class User extends BaseEntity {
+public class UserEntity extends BaseEntity {
     @Id
     @Column(name = "username")
     private String username;
@@ -64,32 +64,4 @@ public class User extends BaseEntity {
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
     }
-
-//    public String getCreatedByUser() {
-//        return createdByUser;
-//    }
-//    public void setCreatedByUser(String createdByUser) {
-//        this.createdByUser = createdByUser;
-//    }
-//
-//    public Date getCreatedAt() {
-//        return createdAt;
-//    }
-//    public void setCreatedAt(Date createdAt) {
-//        this.createdAt = createdAt;
-//    }
-//
-//    public String getModifiedByUser() {
-//        return modifiedByUser;
-//    }
-//    public void setModifiedByUser(String modifiedByUser) {
-//        this.modifiedByUser = modifiedByUser;
-//    }
-//
-//    public Date getModifiedAt() {
-//        return modifiedAt;
-//    }
-//    public void setModifiedAt(Date modifiedAt) {
-//        this.modifiedAt = modifiedAt;
-//    }
 }

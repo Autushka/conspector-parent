@@ -2,7 +2,7 @@ package com.rest
 
 import com.dto.UserRequestDto
 import com.dto.UserResponseDto
-import com.entity.User
+import com.entity.UserEntity
 import com.repository.IUserRepository
 import org.springframework.data.domain.PageImpl
 import org.springframework.http.ResponseEntity
@@ -39,7 +39,7 @@ class UserRestTest extends Specification {
         def mockUserRepository = Mock(IUserRepository.class)
             userRest.@userRepository = mockUserRepository
         when:
-            PageImpl<User> response = userRest.getUsers(pageable);
+            PageImpl<UserEntity> response = userRest.getUsers(pageable);
         then:
             1 * mockUserRepository.findAll(pageable)
     }

@@ -57,6 +57,8 @@ application.properties profile value (development/production));
 
 - spring based audit mechanism (automatic population of the fields CreatedBy, ModifiedBy, CreatedAt, LastModifiedAt);
 
+- transactional way of execution of the operations relevant for db modification;
+
 
 
 	

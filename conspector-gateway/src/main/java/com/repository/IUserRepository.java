@@ -1,6 +1,6 @@
 package com.repository;
 
-import com.entity.User;
+import com.entity.UserEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -13,7 +13,7 @@ import java.util.List;
  */
 
 @Repository
-public interface IUserRepository extends JpaRepository<User, Long> {
-    Page<User> findAll(Pageable pageable);
-    User findByUsername(String username);
+public interface IUserRepository extends JpaRepository<UserEntity, Long> {
+    Page<UserEntity> findAll(Pageable pageable);
+    UserEntity findByUsername(String username);
 }

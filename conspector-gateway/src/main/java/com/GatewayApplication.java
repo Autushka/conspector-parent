@@ -61,7 +61,9 @@ public class GatewayApplication {
 			if (authentication == null || !authentication.isAuthenticated()) {
 				return null;
 			}
-			return ((User) authentication.getPrincipal()).getUsername();
+
+			return authentication.getName();
+			//return ((User) authentication.getPrincipal()).getUsername();
 		}
 	}
 
