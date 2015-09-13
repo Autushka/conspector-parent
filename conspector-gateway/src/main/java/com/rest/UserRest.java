@@ -6,6 +6,7 @@ import com.dto.UserResponseDto;
 import com.repository.IUserRepository;
 import com.entity.User;
 
+import com.utils.BundleMessageReader;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -38,6 +39,8 @@ public class UserRest {
     @Autowired
 	private IUserRepository userRepository;
 
+    private BundleMessageReader bundleMessageReader = new BundleMessageReader();
+
     @Autowired
     private Validator validator;
 
@@ -54,7 +57,7 @@ public class UserRest {
         User user;
         user = userRepository.findByUsername(userRequestDto.getUsername());
         if(user != null){
-            throw new RuntimeException("User with provided email is already registered in the system.");
+            throw new RuntimeException(bundleMessageReader.getMessage("UserAlreadyRegistered"));
         }
 
         StandardPasswordEncoder standardPasswordEncoder = new StandardPasswordEncoder("53cr3t");
@@ -100,7 +103,7 @@ public class UserRest {
         StandardPasswordEncoder standardPasswordEncoder = new StandardPasswordEncoder("53cr3t");
 
         if(!standardPasswordEncoder.matches(userPasswordRequestDto.getCurrentPassword(), userFromDB.getPassword())){
-            throw new RuntimeException("Provided currentPassword is not correct.");
+            throw new RuntimeException(bundleMessageReader.getMessage("WrongCurrentPassword"));
         }
 
         String encodedNewPassword = standardPasswordEncoder.encode(userPasswordRequestDto.getNewPassword());
