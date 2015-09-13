@@ -1,5 +1,8 @@
 package com.entity;
 
+import org.hibernate.envers.Audited;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
 import javax.persistence.*;
 
 /**
@@ -7,14 +10,13 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name = "projects")
+@EntityListeners(AuditingEntityListener.class)
+@Audited
 public class ProjectEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "project_guid"   )
     private long projectGuid;
-
-    @Column(name = "description")
-    private String description;
 
     public long getProjectGuid() {
         return projectGuid;
@@ -23,10 +25,4 @@ public class ProjectEntity {
         this.projectGuid = value;
     }
 
-    public String getDescription() {
-        return description;
-    }
-    public void setDescription(String value){
-        this.description = value;
-    }
 }

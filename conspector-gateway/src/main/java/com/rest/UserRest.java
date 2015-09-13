@@ -54,7 +54,7 @@ public class UserRest {
 
     @RequestMapping(value = "/createUser", method = RequestMethod.POST)
     @Transactional
-    public ResponseEntity<UserResponseDto> createUser(@Valid @RequestBody UserRequestDto userRequestDto) {
+    public void createUser(@Valid @RequestBody UserRequestDto userRequestDto) {
         UserEntity user;
         user = userRepository.findByUsername(userRequestDto.getUsername());
         if(user != null){
@@ -72,7 +72,7 @@ public class UserRest {
 
         UserResponseDto userResponseDto = modelMapper.map(user, UserResponseDto.class);
 
-        return new ResponseEntity<UserResponseDto>(userResponseDto, HttpStatus.OK);
+        return;
     }
 
     @Secured("ROLE_ADMIN")
