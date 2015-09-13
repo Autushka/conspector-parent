@@ -61,4 +61,6 @@ application.properties profile value (development/production));
 
 - concurrent entity modification locking (prevent data from been overwritten if changed between read/write operation);
 
+- hibernate envers enables (read more here: http://docs.jboss.org/envers/docs/) - gives possibility to 
+track entity modifications at individual field level (for test purposes activated for userEntity);
 	
